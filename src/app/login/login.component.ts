@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
+import {UsersService} from "../_services/users.service";
+
+interface Alert {
+  type: string;
+  message: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -11,10 +17,12 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
+  errors: Alert[] = [] ;
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private usersService: UsersService,
   ) { }
 
   ngOnInit(): void {
@@ -24,7 +32,11 @@ export class LoginComponent implements OnInit {
     });
   }
   get f() { return this.loginForm.controls; }
+  close(alert: Alert) {
+    this.errors.splice(this.errors.indexOf(alert), 1);
+  }
   onSubmit() {
+    this.errors = []
     this.submitted = true;
     this.loading = true;
     if (this.loginForm.invalid) {
@@ -33,5 +45,13 @@ export class LoginComponent implements OnInit {
     }
     console.log(this.f.email.value)
     console.log(this.f.password.value)
+    this.usersService.login("12")
+      .subscribe(({ data }) => {
+        this.loading = false;
+        console.log('got data', data);
+      }, (error) => {
+        this.loading = false;
+        this.errors.push(error)
+      });
   }
 }

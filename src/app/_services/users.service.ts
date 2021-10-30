@@ -3,14 +3,17 @@ import { Apollo, gql, QueryRef } from 'apollo-angular';
 import {AuthUser} from "../models/user";
 
 const LOGIN_POST = gql`
-  mutation {
-    loginUser(userInput:{email:"hedfi", password:"password"}) {
-      user {
-        id
+  mutation LoginUser($email: String!, $password: String!) {
+      loginUser(userInput: {email: $email, password: $password}) {
+        user {
+          id
+          email
+          createdAt
+          updatedAt
+        }
+        token
       }
-      token
     }
-  }
 `;
 
 @Injectable({
@@ -18,11 +21,12 @@ const LOGIN_POST = gql`
 })
 export class UsersService {
   constructor(private apollo: Apollo) {}
-  login(postId: string) {
+  login(email: string, password: string) {
     return this.apollo.mutate({
       mutation: LOGIN_POST,
       variables: {
-        postId
+        email,
+        password
       }
     })
   }

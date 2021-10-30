@@ -43,9 +43,7 @@ export class LoginComponent implements OnInit {
       this.loading = false;
       return;
     }
-    console.log(this.f.email.value)
-    console.log(this.f.password.value)
-    this.usersService.login("12")
+    this.usersService.login(this.f.email.value, this.f.password.value)
       .subscribe(({ data }) => {
         this.loading = false;
         console.log('got data', data);

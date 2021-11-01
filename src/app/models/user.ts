@@ -6,6 +6,8 @@ export interface User {
 }
 
 export interface AuthUser {
-  user: User
-  token: string
+  loginUser: {
+    user: User
+    token: string
+  }
 }

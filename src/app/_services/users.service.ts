@@ -24,14 +24,14 @@ const LOGIN_POST = gql`
   providedIn: 'root'
 })
 export class UsersService {
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
-  private currentUserTokenSubject: BehaviorSubject<string>;
-  public currentUserToken: Observable<string>;
+  private currentUserSubject: BehaviorSubject<User  | null>;
+  public currentUser: Observable<User  | null>;
+  private currentUserTokenSubject: BehaviorSubject<string  | null>;
+  public currentUserToken: Observable<string | null>;
 
   constructor(private apollo: Apollo, private tokenStorageService: TokenStorageService) {
-    this.currentUserSubject = new BehaviorSubject<User>(this.tokenStorageService.getUser());
-    this.currentUserTokenSubject = new BehaviorSubject<string>(<string>this.tokenStorageService.getToken());
+    this.currentUserSubject = new BehaviorSubject<User | null>(this.tokenStorageService.getUser());
+    this.currentUserTokenSubject = new BehaviorSubject<string | null>(<string>this.tokenStorageService.getToken());
 
     this.currentUser = this.currentUserSubject.asObservable();
     this.currentUserToken = this.currentUserTokenSubject.asObservable();
@@ -51,5 +51,10 @@ export class UsersService {
       this.currentUserTokenSubject.next(currentUser.loginUser.token);
       return authUser;
     }));
+  }
+  logout() {
+    this.tokenStorageService.signOut()
+    this.currentUserSubject.next(null);
+    this.currentUserTokenSubject.next(null);
   }
 }

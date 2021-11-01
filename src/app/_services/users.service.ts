@@ -3,7 +3,7 @@ import { Apollo, gql, QueryRef } from 'apollo-angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import {AuthUser, User} from "../models/user";
+import {AuthUser, RegisterUser, User} from "../models/user";
 import {TokenStorageService} from "./token-storage.service";
 
 const LOGIN_POST = gql`
@@ -18,6 +18,20 @@ const LOGIN_POST = gql`
         token
       }
     }
+`;
+
+const REGISTER_POST = gql`
+  mutation CreateUser($email: String!, $password: String!) {
+    createUser(userInput: {email: $email, password: $password}) {
+      user {
+        id
+        email
+        createdAt
+        updatedAt
+      }
+      token
+    }
+  }
 `;
 
 @Injectable({
@@ -49,6 +63,22 @@ export class UsersService {
       this.tokenStorageService.saveUser(currentUser.loginUser.user)
       this.currentUserSubject.next(currentUser.loginUser.user);
       this.currentUserTokenSubject.next(currentUser.loginUser.token);
+      return authUser;
+    }));
+  }
+  register(email: string, password: string) {
+    return this.apollo.mutate({
+      mutation: REGISTER_POST,
+      variables: {
+        email,
+        password
+      }
+    }).pipe(map(authUser => {
+      const currentUser = authUser.data as RegisterUser
+      this.tokenStorageService.saveToken(currentUser.createUser.token)
+      this.tokenStorageService.saveUser(currentUser.createUser.user)
+      this.currentUserSubject.next(currentUser.createUser.user);
+      this.currentUserTokenSubject.next(currentUser.createUser.token);
       return authUser;
     }));
   }

@@ -11,3 +11,9 @@ export interface AuthUser {
     token: string
   }
 }
+export interface RegisterUser {
+  createUser: {
+    user: User
+    token: string
+  }
+}

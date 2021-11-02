@@ -1,7 +1,7 @@
 <div id="app">
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <a href="#" class="navbar-brand">Todos</a>
-    <ul class="navbar-nav ml-auto" >
+    <ul class="navbar-nav ml-auto" *ngIf="!currentUser">
       <li class="nav-item">
         <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
       </li>
@@ -10,9 +10,9 @@
       </li>
     </ul>
 
-    <ul class="navbar-nav ml-auto">
+    <ul class="navbar-nav ml-auto" *ngIf="currentUser">
       <li class="nav-item">
-        <a href class="nav-link">LogOut</a>
+        <a href class="nav-link" (click)="logout()">LogOut</a>
       </li>
     </ul>
   </nav>

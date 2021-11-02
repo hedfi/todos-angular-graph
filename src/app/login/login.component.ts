@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
+  returnUrl!: string;
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -22,6 +23,9 @@ export class LoginComponent implements OnInit {
     notifierService: NotifierService
   ) {
     this.notifier = notifierService;
+    if (this.usersService.currentUserValue) {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnInit(): void {
@@ -29,6 +33,7 @@ export class LoginComponent implements OnInit {
       email: ['', Validators.required],
       password: ['', Validators.required]
     });
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
   get f() { return this.loginForm.controls; }
   onSubmit() {
@@ -41,7 +46,7 @@ export class LoginComponent implements OnInit {
     this.usersService.login(this.f.email.value, this.f.password.value)
       .subscribe(({ data }) => {
         this.loading = false;
-        console.log('got data', data);
+        this.router.navigate([this.returnUrl]);
       }, (error) => {
         this.loading = false;
         this.notifier.notify('error', error);

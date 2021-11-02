@@ -1,7 +1,4 @@
 <h2>Login</h2>
-<p *ngFor="let error of errors">
-  <ngb-alert type="danger" (closed)="close(error)">{{ error }}</ngb-alert>
-</p>
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
     <label>email</label>

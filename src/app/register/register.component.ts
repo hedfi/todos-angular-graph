@@ -2,11 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UsersService} from "../_services/users.service";
-
-interface Alert {
-  type: string;
-  message: string;
-}
+import {NotifierService} from "angular-notifier";
 
 @Component({
   selector: 'app-register',
@@ -14,16 +10,19 @@ interface Alert {
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  private readonly notifier: NotifierService;
   registerForm!: FormGroup;
   loading = false;
   submitted = false;
-  errors: Alert[] = [] ;
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private usersService: UsersService,
-  ) { }
+    notifierService: NotifierService
+  ) {
+    this.notifier = notifierService;
+  }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
@@ -32,11 +31,7 @@ export class RegisterComponent implements OnInit {
     });
   }
   get f() { return this.registerForm.controls; }
-  close(alert: Alert) {
-    this.errors.splice(this.errors.indexOf(alert), 1);
-  }
   onSubmit() {
-    this.errors = []
     this.submitted = true;
     this.loading = true;
     if (this.registerForm.invalid) {
@@ -48,9 +43,8 @@ export class RegisterComponent implements OnInit {
         this.loading = false;
         console.log('got data', data);
       }, (error) => {
-        console.error(error)
         this.loading = false;
-        this.errors.push(error)
+        this.notifier.notify('error', error);
       });
   }
 }

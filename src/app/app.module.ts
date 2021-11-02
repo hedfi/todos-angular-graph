@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { NotifierModule } from 'angular-notifier';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,7 +26,8 @@ import {HeaderInterceptor} from "./_services/header.interceptor.service";
     NgbModule,
     ReactiveFormsModule,
     GraphQLModule,
-    HttpClientModule
+    HttpClientModule,
+    NotifierModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HeaderInterceptor, multi: true }

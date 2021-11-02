@@ -46,9 +46,11 @@ export class UsersService {
   constructor(private apollo: Apollo, private tokenStorageService: TokenStorageService) {
     this.currentUserSubject = new BehaviorSubject<User | null>(this.tokenStorageService.getUser());
     this.currentUserTokenSubject = new BehaviorSubject<string | null>(<string>this.tokenStorageService.getToken());
-
     this.currentUser = this.currentUserSubject.asObservable();
     this.currentUserToken = this.currentUserTokenSubject.asObservable();
+  }
+  public get currentUserValue(): User {
+    return <User>this.currentUserSubject.value;
   }
   login(email: string, password: string) {
     return this.apollo.mutate({

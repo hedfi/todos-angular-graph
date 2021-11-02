@@ -52,6 +52,9 @@ export class UsersService {
   public get currentUserValue(): User {
     return <User>this.currentUserSubject.value;
   }
+  public get currentUserTokenValue(): string {
+    return <string>this.currentUserTokenSubject.value;
+  }
   login(email: string, password: string) {
     return this.apollo.mutate({
       mutation: LOGIN_POST,

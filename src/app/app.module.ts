@@ -11,7 +11,8 @@ import { RegisterComponent } from './register/register.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import {HeaderInterceptor} from "./_services/header.interceptor.service";
+import {HeaderInterceptor} from "./_helpers/header.interceptor";
+import {JwtInterceptor} from "./_helpers/jwt.interceptor";
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {HeaderInterceptor} from "./_services/header.interceptor.service";
     NotifierModule
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HeaderInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

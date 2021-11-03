@@ -13,3 +13,6 @@ export interface TodoResult {
 export interface CreateTodo {
   createTodo: Todo
 }
+export interface DeleteTodo {
+  deleteTodo: Todo
+}

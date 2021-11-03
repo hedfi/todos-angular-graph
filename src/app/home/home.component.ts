@@ -5,6 +5,7 @@ import {Todo, TodoResult} from "../models/todo";
 import { faTrash, faPencilAlt, faInfoCircle, faCalendar, faCalendarTimes } from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotifierService} from "angular-notifier";
+import * as _ from "lodash"
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,7 @@ export class HomeComponent implements OnInit {
   todoForm!: FormGroup;
   loading = false;
   submitted = false;
-  todos!: Todo[];
+  todos: Todo[] = [];
   constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private todosService: TodosService, notifierService: NotifierService) {
     this.notifier = notifierService;
   }
@@ -32,6 +33,7 @@ export class HomeComponent implements OnInit {
       description: ['', '']
     });
     this.todos = await this.todosService.getTodos();
+    this.todos = Object.assign([], this.todos);
   }
   get f() { return this.todoForm.controls; }
   addTodo() {
@@ -45,9 +47,8 @@ export class HomeComponent implements OnInit {
       .subscribe(({ data }) => {
         this.loading = false;
         this.submitted = false;
-        this.todos = Object.assign([], this.todos);
         this.todos.push(<Todo>data?.createTodo)
-        this.notifier.notify('success', 'Add Successful');
+        this.notifier.notify('success', 'Added Successful');
         this.todoForm.reset()
       }, (error) => {
         this.loading = false;
@@ -58,7 +59,17 @@ export class HomeComponent implements OnInit {
     console.log('Edit Todo : ', id)
   }
   deleteTodo(id: string) {
-    console.log('Delete Todo : ', id)
+    this.todosService.deleteTodo(id)
+      .subscribe(({ data }) => {
+        this.loading = false;
+        this.submitted = false;
+        _.remove(this.todos, function(todo) {
+          return todo.id == id;
+        });
+        this.notifier.notify('success', 'Deleted Successful');
+      }, (error) => {
+        this.loading = false;
+        this.notifier.notify('error', error);
+      });
   }
-
 }

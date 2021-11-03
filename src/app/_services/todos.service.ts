@@ -1,12 +1,23 @@
 import {Injectable} from "@angular/core";
 import { Apollo, gql, QueryRef, Mutation } from 'apollo-angular';
-import {CreateTodo, Todo, TodoResult} from "../models/todo";
+import {CreateTodo, DeleteTodo, Todo, TodoResult} from "../models/todo";
 import {Observable} from "rxjs";
 import {FetchResult} from "apollo-link";
 
 const CREATE_TODO = gql`
   mutation CreateTodo($title: String!, $description: String) {
     createTodo(title: $title, description: $description) {
+      id
+      title
+      description
+      createdAt
+      updatedAt
+    }
+  }
+`;
+const DELETE_TODO = gql`
+  mutation deleteTodo($todoId: ID!) {
+    deleteTodo(todoId: $todoId) {
       id
       title
       description
@@ -46,6 +57,14 @@ export class TodosService {
       variables: {
         title,
         description
+      }
+    })
+  }
+  deleteTodo(todoId: string): Observable<FetchResult<DeleteTodo>> {
+    return this.apollo.mutate({
+      mutation: DELETE_TODO,
+      variables: {
+        todoId
       }
     })
   }

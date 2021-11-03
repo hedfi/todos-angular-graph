@@ -4,6 +4,17 @@ import {CreateTodo, DeleteTodo, EditTodo, Todo, TodoResult} from "../models/todo
 import {Observable} from "rxjs";
 import {FetchResult} from "apollo-link";
 
+const TODOS = gql`
+  query todos {
+  todos {
+    id
+    title
+    description
+    completed
+    createdAt
+    updatedAt
+  }
+}`
 const CREATE_TODO = gql`
   mutation CreateTodo($title: String!, $description: String) {
     createTodo(title: $title, description: $description) {
@@ -45,24 +56,15 @@ const EDIT_TODO = gql`
   providedIn: 'root'
 })
 export class TodosService {
-  private TodosQuery: QueryRef<{todos: Todo[]}>;
+  private TodosQuery: QueryRef<{todos: Todo[]}, { skip: number, limit: number, orderField: string, orderBy: string}>;
 
   constructor(private apollo: Apollo) {
     this.TodosQuery = this.apollo.watchQuery({
-      query: gql`query todos {
-        todos {
-          id
-          title
-          description
-          completed
-          createdAt
-          updatedAt
-        }
-      }`
+      query: TODOS
     });
   }
-  async getTodos(): Promise<Todo[]> {
-    const result = await this.TodosQuery.refetch();
+  async getTodos(skip = 0,limit = 10, orderField = 'createdAt', orderBy = 'asc'): Promise<Todo[]> {
+    const result = await this.TodosQuery.refetch({ skip, limit, orderField, orderBy });
     return result.data.todos;
   }
   createTodo(title: string, description?: string): Observable<FetchResult<CreateTodo>> {

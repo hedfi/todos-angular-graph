@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {TodosService} from "../_services/todos.service";
 import {ActivatedRoute} from "@angular/router";
 import {EditTodo, Todo, TodoResult} from "../models/todo";
-import { faTrash, faPencilAlt, faInfoCircle, faCalendar, faCalendarTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPencilAlt, faInfoCircle, faCalendar, faCalendarTimes, faSortAmountDown, faSortAmountUp } from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotifierService} from "angular-notifier";
 import * as _ from "lodash"
@@ -14,9 +14,27 @@ import {$e} from "@angular/compiler/src/chars";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  sortOptions = [
+    { value: 'title', text: 'Title' },
+    { value: 'description', text: 'Description' },
+    { value: 'createdAt', text: 'Date Created' },
+    { value: 'updatedAt', text: 'Date Updated' },
+  ]
+  displayOptions = [
+    { value: '5', text: '5' },
+    { value: '10', text: '10' },
+    { value: '20', text: '20' },
+    { value: '40', text: '40' },
+  ]
   private readonly notifier: NotifierService;
+  selectedSortOption = 'createdAt'
+  selectedDisplayOption = 10
+  selectedSkip = 0
+  selectedSortOptionDirection = 'asc'
   pencilIcon = faPencilAlt;
   trashIcon = faTrash;
+  sortAmountDownIcon = faSortAmountDown;
+  sortAmountUpIcon = faSortAmountUp;
   infoCircleIcon = faInfoCircle;
   calendarIcon = faCalendar;
   calendarTimesIcon = faCalendarTimes;
@@ -36,8 +54,7 @@ export class HomeComponent implements OnInit {
       title: ['', Validators.required],
       description: ['', '']
     });
-    this.todos = await this.todosService.getTodos();
-    this.todos = Object.assign([], this.todos);
+    await this.loadTodos()
   }
   get f() { return this.todoForm.controls; }
   onSubmit() {
@@ -113,5 +130,21 @@ export class HomeComponent implements OnInit {
         this.loading = false;
         this.notifier.notify('error', error);
       });
+  }
+  async onChangeDisplayOption($event: any) {
+    this.selectedDisplayOption = $event.target.value
+    await this.loadTodos()
+  }
+  async onChangeSortOption($event: any) {
+    this.selectedSortOption = $event.target.value
+    await this.loadTodos()
+  }
+  async onClickSortOptionDirection(direction: string) {
+    this.selectedSortOptionDirection = direction
+    await this.loadTodos()
+  }
+  async loadTodos() {
+    this.todos = await this.todosService.getTodos(this.selectedSkip, this.selectedDisplayOption, this.selectedSortOption, this.selectedSortOptionDirection);
+    this.todos = Object.assign([], this.todos);
   }
 }

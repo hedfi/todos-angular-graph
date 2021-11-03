@@ -13,6 +13,7 @@ import { GraphQLModule } from './graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {HeaderInterceptor} from "./_helpers/header.interceptor";
 import {JwtInterceptor} from "./_helpers/jwt.interceptor";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {JwtInterceptor} from "./_helpers/jwt.interceptor";
     ReactiveFormsModule,
     GraphQLModule,
     HttpClientModule,
-    NotifierModule
+    NotifierModule,
+    FontAwesomeModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

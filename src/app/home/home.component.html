@@ -93,4 +93,5 @@
       </div>
     </div>
   </div>
+  <ngb-pagination class="d-flex justify-content-end" [collectionSize]="countTodos" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="selectedDisplayOption" [rotate]="true" [ellipses]="false" (pageChange)="loadPage($event)"></ngb-pagination>
 </div>

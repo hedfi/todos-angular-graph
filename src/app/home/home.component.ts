@@ -30,6 +30,8 @@ export class HomeComponent implements OnInit {
   selectedSortOption = 'createdAt'
   selectedDisplayOption = 10
   selectedSkip = 0
+  countTodos = 0
+  currentPage = 1
   selectedSortOptionDirection = 'asc'
   pencilIcon = faPencilAlt;
   trashIcon = faTrash;
@@ -45,6 +47,7 @@ export class HomeComponent implements OnInit {
   btnSubmit: string = 'Add'
   submitted = false;
   todos: Todo[] = [];
+  todosResult!: TodoResult
   constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private todosService: TodosService, notifierService: NotifierService) {
     this.notifier = notifierService;
   }
@@ -144,7 +147,14 @@ export class HomeComponent implements OnInit {
     await this.loadTodos()
   }
   async loadTodos() {
-    this.todos = await this.todosService.getTodos(this.selectedSkip, this.selectedDisplayOption, this.selectedSortOption, this.selectedSortOptionDirection);
+    this.todosResult = await this.todosService.getTodos((this.currentPage - 1 ) * this.selectedDisplayOption, this.selectedDisplayOption, this.selectedSortOption, this.selectedSortOptionDirection)
+    this.todos = this.todosResult.todos
+    this.countTodos = this.todosResult.count
+    console.log(this.countTodos)
     this.todos = Object.assign([], this.todos);
+  }
+  async loadPage($event: any) {
+    this.currentPage = $event
+    await this.loadTodos();
   }
 }

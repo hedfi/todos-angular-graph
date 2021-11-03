@@ -10,7 +10,7 @@ import {UsersService} from "./_services/users.service";
 })
 export class AppComponent {
   currentUser!: User | null;
-
+  title = 'Todos';
   constructor(
     private router: Router,
     private usersService: UsersService

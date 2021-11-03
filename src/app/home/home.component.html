@@ -3,7 +3,7 @@
   <div class="row m-1 p-3">
       <div class="col col-11 mx-auto">
       <div class="row bg-white rounded shadow-sm p-2 add-todo-wrapper align-items-center justify-content-center" >
-        <form [formGroup]="todoForm" class="todo-form" (ngSubmit)="addTodo()">
+        <form [formGroup]="todoForm" class="todo-form" (ngSubmit)="onSubmit()">
           <div class="col">
             <input formControlName="title" class="form-control form-control-lg border-0 add-todo-input bg-transparent rounded" type="text" placeholder="Title" [ngClass]="{ 'is-invalid': submitted && f.title.errors }" >
           </div>
@@ -13,7 +13,12 @@
           <div class="col-auto px-0 mx-0 mr-2">
             <button [disabled]="loading" type="submit" class="btn btn-primary">
               <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-              Add</button>
+              {{btnSubmit}}
+            </button>
+            <button *ngIf="edit" [disabled]="loading" type="button" class="btn btn-danger" (click)="cancelEdit()">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+              Cancel
+            </button>
           </div>
         </form>
       </div>
@@ -26,16 +31,14 @@
       <div *ngFor="let todo of todos" class="row px-3 align-items-center todo-item rounded">
         <div class="col-auto m-1 p-0 d-flex align-items-center">
           <div class="widget-content-left mr-2">
-            <div class="custom-checkbox custom-control"> <input class="custom-control-input" id="{{todo.id}}" type="checkbox"><label class="custom-control-label" for="{{todo.id}}">&nbsp;</label> </div>
+            <div class="custom-checkbox custom-control"> <input class="custom-control-input" id="{{todo.id}}" type="checkbox" (change)="todoCompleted(todo.id, $event)" [checked]="todo.completed"><label class="custom-control-label" for="{{todo.id}}">&nbsp;</label> </div>
           </div>
         </div>
         <div class="col px-1 m-1 d-flex align-items-center">
           <input type="text" class="form-control form-control-lg border-0 edit-todo-input bg-transparent rounded px-3" readonly value="{{todo.title}}" title="{{todo.title}}" />
-          <input type="text" class="form-control form-control-lg border-0 edit-todo-input rounded px-3 d-none" value="{{todo.title}}" />
         </div>
         <div class="col px-1 m-1 d-flex align-items-center">
           <input type="text" class="form-control form-control-lg border-0 edit-todo-input bg-transparent rounded px-3" readonly value="{{todo.description}}" title="{{todo.description}}" />
-          <input type="text" class="form-control form-control-lg border-0 edit-todo-input rounded px-3 d-none" value="{{todo.description}}" />
         </div>
         <div class="col-auto m-1 p-0 px-3 d-none">
         </div>
@@ -50,8 +53,14 @@
           </div>
           <div class="row todo-created-info">
             <div class="col-auto d-flex align-items-center pr-2">
-              <fa-icon [icon]="infoCircleIcon" class="fa fa-info-circle my-2 px-2 text-black-50 btn" data-toggle="tooltip" data-placement="bottom" title="" ngbTooltip="Created date"></fa-icon>
+              <fa-icon [icon]="infoCircleIcon" class="fa fa-info-circle px-2 text-black-50 btn" data-toggle="tooltip" data-placement="bottom" title="" ngbTooltip="Created date"></fa-icon>
               <label class="date-label my-2 text-black-50">{{ todo.createdAt | date: 'medium' }}</label>
+            </div>
+          </div>
+          <div class="row todo-created-info">
+            <div class="col-auto d-flex align-items-center pr-2">
+              <fa-icon [icon]="infoCircleIcon" class="fa fa-info-circle px-2 text-black-50 btn" data-toggle="tooltip" data-placement="bottom" title="" ngbTooltip="Updated date"></fa-icon>
+              <label class="date-label my-2 text-black-50">{{ todo.updatedAt | date: 'medium' }}</label>
             </div>
           </div>
         </div>

@@ -16,3 +16,6 @@ export interface CreateTodo {
 export interface DeleteTodo {
   deleteTodo: Todo
 }
+export interface EditTodo {
+  editTodo: Todo
+}

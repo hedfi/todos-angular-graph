@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
   private readonly notifier: NotifierService;
   selectedSortOption = 'createdAt'
   selectedDisplayOption = 10
+  selectedFilter = ''
   selectedSkip = 0
   countTodos = 0
   currentPage = 1
@@ -134,6 +135,10 @@ export class HomeComponent implements OnInit {
         this.notifier.notify('error', error);
       });
   }
+  async onChangeFilter($event: any) {
+    this.selectedFilter = $event.target.value
+    await this.loadTodos()
+  }
   async onChangeDisplayOption($event: any) {
     this.selectedDisplayOption = $event.target.value
     await this.loadTodos()
@@ -147,10 +152,9 @@ export class HomeComponent implements OnInit {
     await this.loadTodos()
   }
   async loadTodos() {
-    this.todosResult = await this.todosService.getTodos((this.currentPage - 1 ) * this.selectedDisplayOption, this.selectedDisplayOption, this.selectedSortOption, this.selectedSortOptionDirection)
+    this.todosResult = await this.todosService.getTodos((this.currentPage - 1 ) * this.selectedDisplayOption, this.selectedDisplayOption, this.selectedSortOption, this.selectedSortOptionDirection, this.selectedFilter)
     this.todos = this.todosResult.todos
     this.countTodos = this.todosResult.count
-    console.log(this.countTodos)
     this.todos = Object.assign([], this.todos);
   }
   async loadPage($event: any) {

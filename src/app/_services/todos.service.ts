@@ -59,15 +59,15 @@ const EDIT_TODO = gql`
   providedIn: 'root'
 })
 export class TodosService {
-  private TodosQuery: QueryRef<{todos: TodoResult}, { skip: number, limit: number, orderField: string, orderBy: string}>;
+  private TodosQuery: QueryRef<{todos: TodoResult}, { skip: number, limit: number, orderField: string, orderBy: string, completed: string}>;
 
   constructor(private apollo: Apollo) {
     this.TodosQuery = this.apollo.watchQuery({
       query: TODOS
     });
   }
-  async getTodos(skip = 0,limit = 10, orderField = 'createdAt', orderBy = 'asc'): Promise<TodoResult> {
-    const result = await this.TodosQuery.refetch({ skip, limit, orderField, orderBy });
+  async getTodos(skip = 0,limit = 10, orderField = 'createdAt', orderBy = 'asc', completed = ''): Promise<TodoResult> {
+    const result = await this.TodosQuery.refetch({ skip, limit, orderField, orderBy, completed });
     return result.data.todos;
   }
   createTodo(title: string, description?: string): Observable<FetchResult<CreateTodo>> {
